@@ -3,25 +3,82 @@
     <head>
         <meta charset="utf-8">
         <title>D3 Test</title>
-		<style>
-		div.bar {
-			display: inline-block;
-			border-style: solid;
-			border-color: white;
-			border-width: 0.5px;
-			width: 40px;
-			height: 75 px;
-			background-color: blue;}
-			
-		</style>
+
         <script type="text/javascript" src="d3/d3.js"></script>
     </head>
     <body>
-		
+		<div id="frame">
+		<h1 id="par" align="center">Simulation of Pareto(a,b)</h1>
+		<input id='lol1' type='text' value="2.5">
+		<input id='lol2' type='text' value="1">
+		<button onClick='changelol()'>Change</button>
+		<svg id="paper" width="750" height="500">
+		<g id="axe"></g>
+		</svg></div>
 		
         <script type="text/javascript">
 		var a = 2.5;
 		var b = 1;
+		
+		var divTarget = d3.select("body").select("#frame")
+		var h1Target = d3.select("#par")
+		var svgTarget = d3.select("body").select("#paper")
+		function render(x,w,h,n,yS){
+		
+			var sel1 = svgTarget.selectAll("rect").data(x);
+			
+			sel1.enter()
+			.append("rect")
+			.attr('x', function(d,i){
+				return i * (w/n); })
+			.attr("y",function(d){
+				return h - yS(d)- 25; })
+			.attr("width", w/n - 2)
+			.attr("height", function(d){
+				return yS(d); })
+			.attr("fill", "blue")
+			.on("mouseover", function(d) {
+				d3.select(this)
+				.attr("fill","orange");	})
+			.on("mouseout", function(d) {
+				d3.select(this)
+				.transition()
+				.duration(500)
+				.attr("fill","blue"); });
+				
+			sel1.exit().remove();
+			
+			sel1.attr("y",function(d){
+				return h - yS(d)- 25; })
+			.attr("height", function(d){
+				return yS(d); });
+				
+			var sel2 = svgTarget.selectAll("text").data(x);
+			
+			sel2.enter()
+				.append("text")
+				.text(function(d,i){
+					if(d > 0.03 && i % 2 == 0){
+						return Math.round(d * 100) / 100}
+					else {
+						return ""}})
+				.attr("x", function(d,i){
+					return i * (w / x.length);})
+				.attr("y", function(d){
+					return h - yS(d)-30;});
+					
+			sel2.exit().remove();
+			sel2.text(function(d,i){
+					if(d > 0.03 && i % 2 == 0){
+					console.log("write: bin "+i+" "+Math.round(d * 100) / 100);
+						return Math.round(d * 100) / 100}
+					else {
+						return ""}})
+				.attr("x", function(d,i){
+					return i * (w / x.length);})
+				.attr("y", function(d){
+					return h - yS(d)-30;}); }
+				
 		function go2(histo,dataset,numbin){
 			var maxHisto = d3.max(histo);
 			var minHisto = d3.min(histo);
@@ -37,48 +94,12 @@
 						.domain([minHisto, maxHisto+(1-histo[0])/20])
 						.range([0, h3]);
 			
-			
-			var svg2 = d3.select("body")
-			.append("svg")
-			.attr("width", w3)
-			.attr("height", h3);
+			render(histo,w3,h3,numbin,yScale);
 			
 			
-			var recta = svg2.selectAll("rect")
-			.data(histo)
-			.enter()
-			.append("rect")
-			.attr('x', function(d,i){
-				return i * (w3/numbin); })
-			.attr("y",function(d){
-				return h3 - yScale(d)- 25; })
-			.attr("width", w3/numbin - 2)
-			.attr("height", function(d){
-				return yScale(d); })
-			.attr("fill", "blue")
-			.on("mouseover", function(d) {
-				d3.select(this)
-				.attr("fill","orange");	})
-			.on("mouseout", function(d) {
-				d3.select(this)
-				.transition()
-				.duration(500)
-				.attr("fill","blue"); });
+				
 					
 			
-			svg2.selectAll("text")
-				.data(histo)
-				.enter()
-				.append("text")
-				.text(function(d,i){
-					if(d > 0.03 && i % 2 == 0){
-						return Math.round(d * 100) / 100}
-					else {
-						return ""}})
-				.attr("x", function(d,i){
-					return i * (w3 / histo.length);})
-				.attr("y", function(d){
-					return h3 - yScale(d)-30;});
 			
 			var xScale = d3.scaleLinear()
 						//.domain([1, numbin])
@@ -91,16 +112,14 @@
 			var yAxis = d3.axisRight()
 							.scale(yScale)
 							.ticks(5);
-			svg2.append("g")
+			d3.select("#axe")
 			.attr("transform", "translate(0,"+(h3-20)+")")
 			.call(xAxis);
-			// svg2.append("g")
+			// svgTarget.append("g")
 			// .attr("transform", "translate("+20+",0)")
 			// .call(yAxis);
 
 			
-			d3.select("body")
-			.append("hr")
 			
 			console.log(maxData)
 			console.log(minData) }
@@ -140,16 +159,10 @@
 			// console.log(histo.reduce((a, b) => a + b, 0))
 			// console.log(histo)
 			d3.select("body")
-				.append("h1")
-				.attr("align","center")
+				.select("#par")
 				.text("Simulation of Pareto("+a+", " +b+")");
 			go2(histo,dataset,numbin);}
-			goHist(a,b)
-			</script>
-			<input id='lol1' type='text'>
-			<input id='lol2' type='text'>
-			<button onClick='changelol()'>Change</button>
-			<script>
+			
 			function changelol(){
 			var intup1 = document.getElementById('lol1').value;
 			var intup2 = document.getElementById('lol2').value;
@@ -157,8 +170,8 @@
 			b = intup2;
 			goHist(a,b)}
 			
-			d3.select("body")
-			.append("hr")
+			goHist(2.5,1);
+		
 			//selection=(numbin/2+1)
 			//histo = histo.slice(0, selection)
 			//numbin = histo.length
