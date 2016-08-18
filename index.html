@@ -3,16 +3,20 @@
     <head>
         <meta charset="utf-8">
         <title>D3 Test</title>
-
+		<style>
+		h1 {
+		font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;}
+		</style>
         <script type="text/javascript" src="d3/d3.js"></script>
     </head>
     <body>
 		<div id="frame">
-		<h1 id="par" align="center">Simulation of Pareto(a,b)</h1>
+		<h1 id="par" font-family="Times" align="center">Simulation of Pareto(a,b)</h1>
 		<input id='lol1' type='text' value="2.5">
 		<input id='lol2' type='text' value="1">
 		<button onClick='changelol()'>Change</button>
 		<svg id="paper" width="750" height="500">
+		<g id="axe"></g>
 		</svg></div>
 		
         <script type="text/javascript">
@@ -48,13 +52,29 @@
 			sel1.exit().remove();
 			
 			sel1.transition()
-			.duration(250)
+			.duration(500)
 			.attr("y",function(d){
 				return h - yS(d)- 25; })
 			.attr("height", function(d){
 				return yS(d); });
 				
-			}
+			var sel2 = svgTarget.selectAll("text").data(x);
+			
+			sel2.enter()
+				.append("text")
+				.text(function(d,i){
+					if(d > 0.03 && i % 2 == 0){
+						return Math.round(d * 100) / 100}
+					else {
+						return ""}})
+				.attr("x", function(d,i){
+					return i * (w / x.length);})
+				.attr("y", function(d){
+					return h - yS(d)-30;});
+					
+			sel2.exit().remove();
+			sel2.text("");}
+			
 				
 		function go2(histo,dataset,numbin){
 			var maxHisto = d3.max(histo);
@@ -83,11 +103,15 @@
 						.domain([minData, maxData])
 						.range([0, w3]);
 			
-			
+			var xAxis = d3.axisBottom()
+							.scale(xScale)
+							.ticks(10);
 			var yAxis = d3.axisRight()
 							.scale(yScale)
 							.ticks(5);
-			
+			d3.select("#axe")
+			.attr("transform", "translate(0,"+(h3-20)+")")
+			.call(xAxis);
 			// svgTarget.append("g")
 			// .attr("transform", "translate("+20+",0)")
 			// .call(yAxis);
@@ -102,7 +126,7 @@
 			var fataset = [];
 			
 
-			for(var i = 0; i < 1000; i++) {
+			for(var i = 0; i < 5000; i++) {
 				var numb = Math.random();
 				fataset.push(numb);
 				dataset.push(b*Math.pow(1-numb, -1/a));}
