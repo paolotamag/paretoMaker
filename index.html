@@ -215,10 +215,18 @@ input[type="text"] {
 			
 			// console.log(histo.reduce((a, b) => a + b, 0))
 			// console.log(histo)
-			d3.select("body")
+            summa = histo.reduce((a, b) => a + b, 0);
+            console.log(summa)
+            if (summa > 0.8) {
+                d3.select("body")
 				.select("#par")
 				.text("Simulation of Pareto ("+a+", " +b+")");
-			go2(histo,dataset,numbin);}
+			     go2(histo,dataset,numbin); }
+            else {
+                d3.select("body")
+				.select("#par")
+				.text("Error! Try again!");}
+			}
 			
 			function changelol(){
 			var intup1 = document.getElementById('lol1').value;
