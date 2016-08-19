@@ -7,7 +7,13 @@
 		h1 {
 		font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 		color:#666666;}
+    body {
+    background-image: url("100563.jpg");}
 	
+    #frame {
+    background-image: url("paper_texture327.jpg");    
+    width: 900px;
+    height: 870px;}
 	.myButton {
 	
      height : 44px;
@@ -66,7 +72,8 @@ input[type="text"] {
         <script type="text/javascript" src="d3/d3.js"></script>
     </head>
     <body>
-		<div align="center" id="frame">
+        <center>
+		<div align="center" id="frame"><br>
 		<h1 id="par" font-family="Times" align="center">Simulation of Pareto(a,b)</h1>
         <img src="png.png" width="400"><br><br>
         <font size="5">&alpha;&nbsp;&rarr;&nbsp;</font>
@@ -80,6 +87,7 @@ input[type="text"] {
 		<svg id="paper" width="750" height="350">
 		<g id="axe"></g>
 		</svg></div>
+        </center>
 		
         <script type="text/javascript">
 		var a = 2.5;
